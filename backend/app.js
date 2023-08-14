@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 
+// Importe le module pour mettre en place la sécurité de rate limiting contre les attaques de robots
+const rateLimit = require('express-rate-limit'); 
+
 const bookRoutes = require('./routes/book');
 const userRoutes = require('./routes/user');
 
@@ -22,6 +25,14 @@ mongoose.connect(
 const app = express();
 
 app.use(bodyParser.json());
+
+// Configuration du rate limiting
+const limiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // Durée de la fenêtre observée en ms (ici 5 min)
+  max: 5, // Nb de requêtes limites par adresse IP dans l'intervalle de temps observé au dessus
+});
+
+app.use(limiter);
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
