@@ -28,13 +28,14 @@ exports.resizeImage = (req, res, next) => {
   const imagePath = req.file.path;
 
   sharp(imagePath)
-    .resize(463, 595)
-    .toFile(`${imagePath}_resized`, (err, info) => {
+    .resize(463, null) // Définit la largeur à 463px, laisse la hauteur libre pour respecter les dimensions
+    .webp({ quality: 20 }) // Converti en format webp avec une qualité de 20%
+    .toFile(`${imagePath}_resized.webp`, (err, info) => {
       if (err) {
         return next(err);
       }
       // Renomme l'image redimensionnée avec le nom d'origine
-      fs.rename(`${imagePath}_resized`, imagePath, (err) => {
+      fs.rename(`${imagePath}_resized.webp`, imagePath, (err) => {
         if (err) {
           return next(err);
         }
