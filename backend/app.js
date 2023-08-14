@@ -1,3 +1,5 @@
+// Charge les variables d'environnement dans le fichier .env
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -7,7 +9,8 @@ const bookRoutes = require('./routes/book');
 const userRoutes = require('./routes/user');
 
 mongoose.connect(
-  'mongodb+srv://juju:jujumdp@cluster0.j9w4oha.mongodb.net/?retryWrites=true&w=majority',
+  // importe l'url contenu dans le fichier .env
+  process.env.MONGODB_URL,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
