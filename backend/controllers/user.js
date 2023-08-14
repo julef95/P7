@@ -1,9 +1,21 @@
+// Charge les variables d'environnement dans le fichier .env
+require('dotenv').config();
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+// Importe les fonctions validationResult et body de express-validator
+const { validationResult, body } = require('express-validator');
 
 const User = require('../models/user');
 
 exports.signup = (req, res, next) => {
+    // Utilisation d'express-validator pour valider les données d'inscription
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const errorMessages = errors.array().map(error => error.msg);
+        return res.status(400).json({ errors: errorMessages });
+    }
+
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
         const user = new User({
@@ -32,7 +44,8 @@ exports.login = (req, res, next) => {
                 userId: user._id,
                 token: jwt.sign(
                     { userId: user._id },
-                    'TOKEN',
+                    // Importe le grain de sel contenu dans le fichier .env
+                    process.env.SECRET_TOKEN,
                     { expiresIn: '24h' }
                 )
             });
