@@ -84,6 +84,12 @@ exports.getAllBooks = (req, res, next) => {
 exports.addRating = (req, res, next) => {
     const userId = req.auth.userId;
     const { rating } = req.body;
+
+    // Vérification note comprise entre 0 et 5
+    if (rating < 0 || rating > 5) {
+        return res.status(400).json({ message: 'La note doit être comprise entre 0 et 5.' });
+    }
+
     const userRating = { userId, grade: rating };
 
     delete req.body._userId;
@@ -104,6 +110,9 @@ exports.addRating = (req, res, next) => {
                 .then((book) => {
                     const sumRatings = book.ratings.reduce((sum, rating) => sum + rating.grade, 0);
                     book.averageRating = sumRatings / book.ratings.length;
+
+                    // Arrondi la note moyenne à une décimale
+                    book.averageRating = parseFloat(book.averageRating.toFixed(1));
 
                     book.save()
                     .then(book => res.status(200).json(book))
