@@ -28,8 +28,8 @@ app.use(bodyParser.json());
 
 // Configuration du rate limiting
 const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // Durée de la fenêtre observée en ms (ici 5 min)
-  max: 5, // Nb de requêtes limites par adresse IP dans l'intervalle de temps observé au dessus
+  windowMs: 15 * 60 * 1000, // Durée de la fenêtre observée en ms (ici 15 min)
+  max: 200, // Nb de requêtes limites par adresse IP dans l'intervalle de temps observé au dessus
 });
 
 app.use(limiter);
